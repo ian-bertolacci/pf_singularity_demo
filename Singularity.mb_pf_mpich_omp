@@ -158,7 +158,7 @@ From: fedora:27
 
     cd /home/parflow   
     
-    
+    export CORE_COUNT=2
     export PARFLOW_DIR=/home/parflow/pfdir_omp
     export MPI_DIR=/home/parflow/pflib/mpich
     export HDF5_DIR=/home/parflow/pflib/hdf5
@@ -227,7 +227,7 @@ From: fedora:27
 
     cd /home/parflow
     
-    
+    export CORE_COUNT=2
     export PARFLOW_DIR=/home/parflow/pfdir_master
     export MPI_DIR=/home/parflow/pflib/mpich
     export HDF5_DIR=/home/parflow/pflib/hdf5    
