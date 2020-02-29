@@ -1,0 +1,272 @@
+Bootstrap: docker
+From: fedora:27
+%labels
+    # A base OS image to use for building ParFlow 
+%post    
+
+    # update OS
+
+    yum -y update
+
+    #-----------------------------------------------------------------------------
+    #  Install package dependencies
+    #-----------------------------------------------------------------------------    
+    yum groupinstall -y "Development Tools"
+    yum  install -y  \
+    autoconf \
+    automake \
+    binutils \
+    cmake3 \
+    file \
+    git \
+    gcc-c++ \
+    gcc-gfortran \
+    libtool \
+    lsof \
+    make \
+    tcl-devel \
+    tcsh \
+    time \
+    tk-devel \
+    wget \
+    which \
+    zlib \
+    zlib-devel
+
+
+
+    #-----------------------------------------------------------------------------
+    # Set some build time variables
+    #-----------------------------------------------------------------------------
+
+    export CORE_COUNT=2
+    HOME_DIR=/home/parflow
+    export PARFLOW_LIB_DIR=${HOME_DIR}/pflib
+    export DOWNLOAD_DIR=${HOME_DIR}/downloads
+    mkdir -p ${PARFLOW_LIB_DIR}
+    cd ${HOME_DIR}   
+
+
+    #-----------------------------------------------------------------------------
+    # Build libraries
+    #-----------------------------------------------------------------------------
+
+
+    #-----------------------------------------------------------------------------
+    # MPICH
+    #-----------------------------------------------------------------------------
+
+    echo "Installing MPICH"
+    export MPICH_DIR=${PARFLOW_LIB_DIR}/mpich
+    export MPICH_VERSION=3.2.1
+    export MPICH_URL="http://www.mpich.org/static/downloads/${MPICH_VERSION}/mpich-${MPICH_VERSION}.tar.gz"
+    mkdir -p ${DOWNLOAD_DIR}/mpich    
+    mkdir -p $MPICH_DIR
+    # Download
+    cd ${DOWNLOAD_DIR}/mpich && wget -O mpich-$MPICH_VERSION.tar.gz $MPICH_URL && tar -xf mpich-$MPICH_VERSION.tar.gz
+    # Compile and install
+    cd ${DOWNLOAD_DIR}/mpich/mpich-$MPICH_VERSION && ./configure --prefix=$MPICH_DIR && make install -j${CORE_COUNT}
+    #make -j${CORE_COUNT} check
+    cd ..
+    rm -fr mpich mpich-$MPICH_VERSION.tar.gz
+    # Set env variables so we can
+    # compile our application
+    export PATH=$MPICH_DIR/bin:$PATH
+    export LD_LIBRARY_PATH=$MPICH_DIR/lib:$LD_LIBRARY_PATH
+    
+    cd ${HOME_DIR}   
+
+
+    #-----------------------------------------------------------------------------
+    # HDF5
+    #-----------------------------------------------------------------------------
+    echo "Installing HDF5"
+    export HDF5_DIR=${PARFLOW_LIB_DIR}/hdf5
+    export HDF5_VERSION=1.10.4
+    export HDF5_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz"
+    mkdir -p $HDF5_DIR
+    mkdir -p ${DOWNLOAD_DIR}/hdf5
+    cd ${DOWNLOAD_DIR}/hdf5 && \
+    wget ${HDF5_URL} && \
+    tar -xf hdf5-${HDF5_VERSION}.tar.gz && \
+    cd hdf5-${HDF5_VERSION} && \
+    CC=mpicc ./configure \
+      --prefix=$HDF5_DIR \
+      --enable-parallel && \
+    make -j${CORE_COUNT} && make install -j${CORE_COUNT} && \
+    #make -j${CORE_COUNT} check && \
+    cd .. && \
+    rm -fr hdf5-${HDF5_VERSION} hdf5-${HDF5_VERSION}.tar.gz
+    export LD_LIBRARY_PATH=$HDF5_DIR/lib:$LD_LIBRARY_PATH
+
+ 
+
+    #-----------------------------------------------------------------------------
+    # SILO 
+    #-----------------------------------------------------------------------------
+    echo "Installing SILO"
+    export SILO_DIR=${PARFLOW_LIB_DIR}/silo
+    export SILO_VERSION=4.10.2    
+    mkdir -p $SILO_DIR
+    mkdir -p ${DOWNLOAD_DIR}/silo
+    cd ${DOWNLOAD_DIR}/silo
+
+    wget -O silo-${SILO_VERSION}.tar.gz \
+        https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-${SILO_VERSION}/silo-${SILO_VERSION}.tar.gz && \
+    tar -xf silo-${SILO_VERSION}.tar.gz && \
+    cd silo-${SILO_VERSION} && \
+    ./configure  --prefix=$SILO_DIR --disable-silex --disable-hzip --disable-fpzip FC=/usr/bin/gfortran F77=/usr/bin/gfortran && \
+    make install -j${CORE_COUNT} && \
+    #make check && \
+    cd .. && \
+    rm -fr silo-${SILO_VERSION} silo-${SILO_VERSION}.tar.gz
+
+
+    #-----------------------------------------------------------------------------
+    # Hypre
+    #-----------------------------------------------------------------------------
+    echo "Installing Hypre"
+    export HYPRE_DIR=${PARFLOW_LIB_DIR}/hypre
+    export HYPRE_VERSION=2.18.2
+    mkdir -p ${DOWNLOAD_DIR}/hypre
+    cd ${DOWNLOAD_DIR}/hypre
+    wget https://github.com/hypre-space/hypre/archive/v${HYPRE_VERSION}.tar.gz && \
+    tar xf v${HYPRE_VERSION}.tar.gz && \
+    cd hypre-${HYPRE_VERSION}/src && \
+    ./configure --prefix=${HYPRE_DIR} && \
+    CC=mpicc && \
+    make install -j${CORE_COUNT} && \
+    cd .. && \
+    rm -fr hypre-${HYPRE_VERSION} v${HYPRE_VERSION}.tar.gz
+
+
+
+##############################
+
+# omp build
+
+##############################
+
+
+%apphelp omp
+
+    This is the help for omp branch. This app runs parflow compiled from hydrframe omp experimental branch
+    To run: $ singularity run --app omp <path_to_singularity_container> <tcl_file> [optional arguments passed to tcl_file]
+
+
+%appinstall omp
+
+    cd /home/parflow   
+    
+    
+    export PARFLOW_DIR=/home/parflow/pfdir_omp
+    export MPI_DIR=/home/parflow/pflib/mpich
+    export HDF5_DIR=/home/parflow/pflib/hdf5
+    export NETCDF_DIR=/home/parflow/pflib/netcdf
+    export SILO_DIR=/home/parflow/pflib/silo
+    export HYPRE_DIR=/home/parflow/pflib/hypre
+    export PATH=${MPI_DIR}/bin:$PATH
+    export LD_LIBRARY_PATH=${HDF5_DIR}/lib:${MPI_DIR}/lib:$LD_LIBRARY_PATH
+    
+    #-----------------------------------------------------------------------------
+    # Parflow configure and build
+    #-----------------------------------------------------------------------------
+                
+    git clone -b pf_omp --single-branch https://github.com/hydroframe/ParFlow_PerfTeam.git parflow_omp && \
+    cd parflow_omp && \
+    git checkout 6b55b7cdd546ef0a0490c93787cdefb2f5abb65a && \
+    cd .. && \
+    mkdir -p build_omp && \
+    cd build_omp && \
+    cmake3 ../parflow_omp \
+    -DPARFLOW_AMPS_LAYER=mpi1 \
+    -DHYPRE_ROOT=${HYPRE_DIR} \
+    -DSILO_ROOT=${SILO_DIR} \
+    -DHDF5_ROOT=${HDF5_DIR} \
+    -DPARFLOW_ENABLE_TIMING=TRUE \
+    -DPARFLOW_HAVE_CLM=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=${PARFLOW_DIR} \
+    -DPARFLOW_ENABLE_OMP=TRUE && \
+    make install -j${CORE_COUNT} 
+
+
+%appenv omp
+
+    export PARFLOW_DIR=/home/parflow/pfdir_omp
+    export OMP_NUM_THREADS=4
+
+%apprun omp
+
+    exec tclsh "$@"
+
+%apptest omp
+    # These tests can't be run inside the immutable container because of how parflow requires to write to disk
+    export PARFLOW_DIR=/home/parflow/pfdir_omp
+    cd /home/parflow/build_omp
+    make test
+
+
+
+##############################
+
+# master branch for comparison
+
+##############################
+
+
+%apprun master
+
+    exec tclsh "$@"
+
+%applabels master
+
+    Parflow from the main master branch for comparison
+
+%appinstall master
+
+    cd /home/parflow
+    
+    
+    export PARFLOW_DIR=/home/parflow/pfdir_master
+    export MPI_DIR=/home/parflow/pflib/mpich
+    export HDF5_DIR=/home/parflow/pflib/hdf5    
+    export SILO_DIR=/home/parflow/pflib/silo
+    export HYPRE_DIR=/home/parflow/pflib/hypre
+    export PATH=${MPI_DIR}/bin:$PATH
+    export LD_LIBRARY_PATH=${HDF5_DIR}/lib:${MPI_DIR}/lib:$LD_LIBRARY_PATH
+    
+    #-----------------------------------------------------------------------------
+    # Parflow configure and build
+    #-----------------------------------------------------------------------------   
+        
+    git clone -b master --single-branch https://github.com/parflow/parflow parflow_master && \
+    cd parflow_master && \
+    git checkout b1c408fcb99f1f242a3c0830517eda80515b6201 && \
+    cd .. && \
+    mkdir -p build_master && \
+    cd build_master && \
+    cmake3 ../parflow_master \
+    -DPARFLOW_AMPS_LAYER=mpi1 \
+    -DHYPRE_ROOT=${HYPRE_DIR} \
+    -DSILO_ROOT=${SILO_DIR} \
+    -DHDF5_ROOT=${HDF5_DIR} \
+    -DPARFLOW_ENABLE_TIMING=TRUE \
+    -DPARFLOW_HAVE_CLM=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=${PARFLOW_DIR} && \
+    make install -j${CORE_COUNT}
+
+
+%appenv master
+    export PARFLOW_DIR=/home/parflow/pfdir_master    
+
+%apphelp master
+
+    This is the help for master. This app runs parflow compiled from master branch
+    To run: $ singularity run --app master <path_to_singularity_container> <tcl_file> [optional arguments passed to tcl_file]
+
+%apptest master
+    export PARFLOW_DIR=/home/parflow/pfdir_master
+    cd /home/parflow/build_master
+    make test    
