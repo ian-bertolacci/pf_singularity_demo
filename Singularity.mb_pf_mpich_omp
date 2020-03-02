@@ -203,6 +203,7 @@ From: fedora:27
 %apptest omp
     # These tests can't be run inside the immutable container because of how parflow requires to write to disk
     export PARFLOW_DIR=/home/parflow/pfdir_omp
+    export OMP_NUM_THREADS=4
     cd /home/parflow/build_omp
     make test
 
