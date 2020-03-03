@@ -21,9 +21,9 @@ name=$1
 
 timesteps=$5
 
-SINGULARITY_FILE=parflow_demo_omp_expiremental.sif
+SINGULARITY_FILE=parflow_demo_master.sif
 if [[ ! -f "$SINGULARITY_FILE" ]]; then
-    singularity pull library://arezaii/default/parflow_demo:omp_expiremental
+    singularity pull library://arezaii/default/parflow_demo:sha256.985b1c0621c657592ec8a5bfaadde86e78dcd2eb3d697070787e038
 fi
 
 
