@@ -29,5 +29,6 @@ fi
 
 
 cd ./perf_tests
-
+echo "running tests for $name...may take a while..."
 singularity run --app par ../$SINGULARITY_FILE exec_test_suite.tcl $name $P $Q $R $timesteps
+echo "tests complete. Results are in perf_tests/$name/results.csv"
