@@ -30,4 +30,4 @@ fi
 
 cd ./perf_tests
 
-singularity run --app master ../parflow_demo_omp_expiremental.sif exec_test_suite.tcl $name $P $Q $R $timesteps
+singularity run --app par ../parflow_demo_master.sif exec_test_suite.tcl $name $P $Q $R $timesteps
