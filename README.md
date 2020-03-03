@@ -3,20 +3,60 @@
 The ParFlow container is built as a sci-app container, providing access to both sequential and parallel 
 builds of ParFlow
 
-## About Apps
-- par = distributed build of ParFlow, -DPARFLOW_AMPS_SEQUENTIAL_IO=False
-- seq = sequential build of ParFlow, -DPARFLOW_AMPS_SEQUENTIAL_IO=True
-
-to run either:
-```bash
-$ singularity run --app <app_name> </path/to/singularity_container.sif> <.tcl input file>
-```
-See additional information about [Apps in Singularity](https://sylabs.io/guides/3.3/user-guide/definition_files.html?highlight=apps#apps)
-
-
 ## Requirements
 - Host OS must have Singularity installed
 - To build container from recipe file, user must have root access
+
+## Running Performance Test Cases
+The shell script run_test.sh facilitates running tests on different domains.
+
+Usage: 
+```bash
+$ ./run_test.sh <domain> <P> <Q> <R> <TimeSteps>
+```
+
+## Test Domains
+
+There are several test domains for performance analysis contained in the perf_tests folder.
+
+* LW - Little Washita 
+* clayl - ClayL
+* conus_ru - CONUS Clip - Run off
+* conus_tfg - CONUS Clip - Terrain Following Grid
+
+### Little Washita
+Natural model of the Little Washita watershed in Kansas.
+***Domain Details***
+* Number of Cells: 41x41x50 (X,Y,Z)
+* Horizontal Resolution: 1km
+* Vertical Resolution: 2m
+
+***Technical Details***
+* CLM enabled with NLDAS Forcings
+* Timestep: 1hr
+* Suburface: Heterogeneous
+
+### ClayL
+Synthetic model with flat surface and many thin, vertical layers
+***Domain Details***
+
+### CONUS Run-off
+Natural topography with an impervious surface
+
+### CONUS Terrain Following Grid
+Natural topography with the terrain following grid (TFG) feature enabled
+
+## About Apps
+
+to run:
+```bash
+$ singularity run --app <app_name> </path/to/singularity_container.sif> <.tcl input file>
+```
+- par = distributed build of ParFlow, -DPARFLOW_AMPS_SEQUENTIAL_IO=False
+- seq = sequential build of ParFlow, -DPARFLOW_AMPS_SEQUENTIAL_IO=True
+
+See additional information about [Apps in Singularity](https://sylabs.io/guides/3.3/user-guide/definition_files.html?highlight=apps#apps)
+
 
 ## To Build Container
 General build command is of the form:
