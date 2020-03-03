@@ -23,11 +23,11 @@ timesteps=$5
 
 SINGULARITY_FILE=parflow_demo_master.sif
 if [[ ! -f "$SINGULARITY_FILE" ]]; then
-    singularity pull library://arezaii/default/parflow_demo:sha256.985b1c0621c657592ec8a5bfaadde86e78dcd2eb3d697070787e038
+    singularity pull $SINGULARITY_FILE library://arezaii/default/parflow_demo:sha256.985b1c0621c657592ec8a5bfaadde86e78dcd2eb3d697070787e03841bbc6613
 fi
 
 
 
 cd ./perf_tests
 
-singularity run --app par ../parflow_demo_master.sif exec_test_suite.tcl $name $P $Q $R $timesteps
+singularity run --app par ../$SINGULARITY_FILE exec_test_suite.tcl $name $P $Q $R $timesteps
