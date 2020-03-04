@@ -2,3 +2,9 @@
 outputs/
 **/.directory
 Outputs/
+perf_tests/**/case*/
+perf_tests/**/collect_stats.tcl
+perf_tests/**/pftest.tcl
+perf_tests/**/run_test.tcl
+perf_tests/**/run_tests.tcl
+!perf_tests/solver_configs/case*/
