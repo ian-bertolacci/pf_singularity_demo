@@ -3,15 +3,16 @@
 if [[ $# < 5 ]]
 then
   echo "Usage: $0 <name> <P> <Q> <R> <TimeSteps>"
+  echo " where <name> is one of:"
+  echo "  * LW - Little Washita"
+  echo "  * clayl - ClayL"
+  echo "  * conus_ru - CONUS Clip - Run off"
+  echo "  * conus_tfg - CONUS Clip - Terrain Following Grid"
+  echo "  <P> <Q> <R> are integers defining processor topology in X,Y,Z directions"
+  echo "  <TimeSteps> is an integer number of timesteps to run simulation for"
   exit
 fi
 
-# if [[ $# == 5 ]]
-# then
-#   path_to_root=$5
-# else
-#   path_to_root=$(pwd)
-# fi
 
 P=$2
 Q=$3
