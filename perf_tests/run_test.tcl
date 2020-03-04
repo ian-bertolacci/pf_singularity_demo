@@ -18,6 +18,7 @@ proc run_test { test_directory P Q R T } {
   file copy -force $test_directory/solver_params.tcl $test_run_dir/.
   file copy -force ../pfbdiff.py $test_run_dir/.
   file copy -force validate_results.tcl $test_run_dir/.
+  file copy -force ../delete_logs.tcl $test_run_dir/.
   
   # write a log file to the $test_directory
   # include Date/Time of run, number of runs

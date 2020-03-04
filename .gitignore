@@ -7,4 +7,7 @@ perf_tests/**/collect_stats.tcl
 perf_tests/**/pftest.tcl
 perf_tests/**/run_test.tcl
 perf_tests/**/run_tests.tcl
+perf_tests/**/pfbdiff.py
+perf_tests/**/delete_logs.tcl
+perf_tests/**/solver_params.tcl
 !perf_tests/solver_configs/case*/
