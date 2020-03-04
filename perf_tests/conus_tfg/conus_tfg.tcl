@@ -170,6 +170,7 @@ pfset TimingInfo.BaseUnit        100000.
 pfset TimingInfo.StartCount      0
 pfset TimingInfo.StartTime       0.0
 pfset TimingInfo.StopTime        100000.
+#pfset TimingInfo.StopTime        $StopTime
 pfset TimingInfo.DumpInterval    100000.
 pfset TimeStep.Type              Constant
 pfset TimeStep.Value             100000.
