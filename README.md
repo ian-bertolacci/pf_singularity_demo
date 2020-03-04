@@ -1,11 +1,19 @@
 # ParFlow Singularity Container Demonstration
 
-The ParFlow container is built as a sci-app container, providing access to both sequential and parallel 
-builds of ParFlow
+The ParFlow container is built as a SCIF-app container, providing access to both sequential and parallel 
+builds of ParFlow. See additional information about [Apps in Singularity](https://sylabs.io/guides/3.3/user-guide/definition_files.html?highlight=apps#apps)
 
-## Requirements
-- Host OS must have Singularity installed
-- To build container from recipe file, user must have root access
+## Prerequisits
+- Host OS must have Singularity installed (See [Installing Singularity](https://sylabs.io/guides/3.3/user-guide/installation.html))
+
+## Quickstart
+Steps:
+1. Clone this repository
+`git clone https://github.com/arezaii/pf_singularity_demo`
+2. cd to the repository directory
+`cd pf_singularity_demo`
+3. run the shell script
+`./run_test.sh LW 1 1 1 1`
 
 ## Running Performance Test Cases
 The shell script run_test.sh facilitates running tests on different domains.
@@ -26,6 +34,7 @@ There are several test domains for performance analysis contained in the perf_te
 
 ### Little Washita
 Natural model of the Little Washita watershed in Kansas.
+
 ***Domain Details***
 * Number of Cells: 41x41x50 (X,Y,Z)
 * Horizontal Resolution: 1km
@@ -38,6 +47,7 @@ Natural model of the Little Washita watershed in Kansas.
 
 ### ClayL
 Synthetic model with flat surface and many thin, vertical layers
+
 ***Domain Details***
 
 ### CONUS Run-off
@@ -59,6 +69,7 @@ See additional information about [Apps in Singularity](https://sylabs.io/guides/
 
 
 ## To Build Container
+To build container from recipe file, user must have root access on the machine. Alternatively, one can use a remote build service such as [cloud.sylabs.io](https://cloud.sylabs.io/builder)
 General build command is of the form:
 ```bash
 $ sudo singularity build <destination/path/to/singularity_container.sif> <Singularity definition file>
@@ -75,21 +86,21 @@ example of running the LW test case in `parflow/test/washita/tcl_scripts` direct
 $ singularity run --app par ~/pf_singularity_ompi LW_Test.tcl
 ```
 
-## Pull from Singularity Hub
+## Pull from Sylabs Cloud
 
 ```bash
-$ singularity pull shub://arezaii/pf_singularity:parflow_ompi
+$ singularity pull [destination image name] library://arezaii/default/parflow_demo:master
 ```
 then to use it:
 ```bash
-singularity run --app par pf_singularity_parflow_ompi.sif LW_Test.tcl
+singularity run --app par <singularity image file> LW_Test.tcl
 ```
 
 
 ## Testing
 
 Because singularity containers are immutable and ParFlow tests write to disk, you must expand the image to a writable sandbox.
-Unfortunately this requires super user access to do...
+This requires super user access, similar to building a container from the definition file.
 
 ### Make Container Writable
 
@@ -100,7 +111,7 @@ sudo singularity build --sandbox <directory_to_create_for_sandbox/> <singularity
 
 as an example, if you had pulled the parflow_ompi image from shub:
 ```bash
-sudo singularity build --sandbox pf_singularity_parflow_ompi_test/ pf_singularity_parflow_ompi.sif
+sudo singularity build --sandbox parflow_demo_master_sandbox/ parflow_demo_master.sif
 ```
 
 There will now be a new directory pf_singularity_parflow_ompi_test/ that is the root of the container.
