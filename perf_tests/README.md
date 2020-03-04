@@ -1,8 +1,4 @@
-****************
-* Parflow Solver Performance Tests
-* 08/08/2019
-* Ahmad Rezaii
-**************** 
+# ParFlow Solver Configuration Testing
 
 ## OVERVIEW
 
@@ -12,7 +8,7 @@
 
 ## INCLUDED FILES
 
- 
+ * solver_configs/caseXX/solver_params.tcl - Solver configuration to apply for this test
  * collect_stats.tcl - script to collect stats from all the test cases in a domain
  * purge_log_files.tcl - script to purge all the log files generated from a run
  * exec_test_suite.tcl - wrapper script to run all tests in a domain from root of test directory
@@ -21,13 +17,8 @@
  * global_config.tcl - store location of parflow test directory to use for LW and LW_var_dz testing
  * README.md - this file
  * pfbdiff.py - python script to compare output files for differences
- * Domain SubFolders - Each problem domain is given its own folder   
-   * LW - Folder containing the tests for the LW test domain
-   * LW_var_dz - Folder containing the tests for the LW variable dz test domain
-   * MediumWatershed - Parking lot simulation over large, irregular domain
-   * UpperCO - Large'ish watershed with varied topography (Pull data from cyverse using get_cyverse_data.sh)
- * Domain SubFolders/caseXX - Each domain has a set of solver configurations to test
- * Domain SubFolders/caseXX/solver_params.tcl - Solver configuration to apply for this test_config
+ * Domain SubFolders - Each problem domain is given its own folder
+ * Domain SubFolders/tests.tcl - Defines the set of solver configurations to use for this test domain
  * Domain SubFolders/DomainName.tcl - adapted TCL script to use when testing
  * Domain SubFolders/results.csv - the collected results from the
  * Domain SubFolders/test_config.tcl - Domain specific information, where to find the test directory, runname, etc.
