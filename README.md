@@ -3,7 +3,7 @@
 The Singularity container is built with ParFlow installed as a SCIF-app, providing access to both sequential and parallel 
 builds of ParFlow. See additional information about [Apps in Singularity](https://sylabs.io/guides/3.3/user-guide/definition_files.html?highlight=apps#apps)
 
-## Prerequisits
+## Prerequisites
 - Host OS must have Singularity installed (See [Installing Singularity](https://sylabs.io/guides/3.3/user-guide/installation.html))
 
 ## Quickstart
