@@ -98,7 +98,7 @@ Natural topography with the terrain following grid (TFG) feature enabled
 * No CLM, seepage face boundary condition type on top layer, @ 0.00001 
 * Timestep: 100000
 * Subsurface: Homogeneous
-* Initial Condition: Dry
+* Initial Condition: Water Table at 45m above lower boundary
 
 
 ## About Apps
