@@ -6,7 +6,24 @@ builds of ParFlow. See additional information about [Apps in Singularity](https:
 ## Prerequisites
 - Host OS must have Singularity installed (See [Installing Singularity](https://sylabs.io/guides/3.3/user-guide/installation.html))
 
-## Quickstart
+## Linux Hosts
+Verify Singularity is installed with the command:
+```
+singularity --version
+```
+Then, see the Quickstart directions below
+
+## Windows/Mac Hosts
+Follow the instructions to [install Singularity](https://sylabs.io/guides/3.3/user-guide/installation.html#install-on-windows-or-mac)
+
+Make sure you are ssh'd into the Vagrant box before beginning the Quickstart steps below
+```
+vagrant ssh
+vagrant@vagrant:~$ singularity --version
+```
+
+
+## Quickstart 
 Steps:
 1. Clone this repository
 ```
