@@ -90,5 +90,15 @@ if {[info exists RAPType]} {
 }
 ```
  
+## To Add or Change Solver Configurations for a Domain
 
- 
+Modify the list of solver configurations defined in the subdomain's test.tcl file. 
+
+For example, clayl/tests.tcl
+
+
+## To Delete Test Logs
+
+Use the purge_log_files.tcl script to remove log files for all subdomains.
+
+

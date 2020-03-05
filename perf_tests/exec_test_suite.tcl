@@ -8,6 +8,7 @@ file copy -force pftest.tcl $suite_dir/.
 source $suite_dir/tests.tcl
 
 foreach dir $solver_configs {
+	file delete -force -- $suite_dir/$dir
 	file copy -force solver_configs/$dir $suite_dir/$dir
 }
 

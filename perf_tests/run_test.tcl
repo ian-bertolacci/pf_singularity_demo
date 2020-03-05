@@ -21,14 +21,22 @@ proc run_test { test_directory P Q R T } {
   file copy -force ../delete_logs.tcl $test_run_dir/.
   
   # write a log file to the $test_directory
-  # include Date/Time of run, number of runs
+  # include Date/Time of run, number of runs, PQR, machine name, mem and cpu data
   set systemTime [clock seconds]
+  set hostName [exec hostname]
+  set cpuInfo [exec cat /proc/cpuinfo]
+  set memInfo [exec cat /proc/meminfo]
   set output_file [open $test_directory/test_case.log w]
   puts -nonewline $output_file "Test Started: " 
   puts $output_file [clock format $systemTime -format { %D %T }]
   puts $output_file "Test Run Count: $number_of_runs"
-  close $output_file
-  
+  puts $output_file "Test Configuration: $P $Q $R"
+  puts $output_file "MachineName: $hostName"
+  puts $output_file "CPU Info: $cpuInfo"
+  puts $output_file "Mem Info: $memInfo"
+  close $output_file 
+
+
   # run the test
   cd $test_run_dir
   set ::env(PARFLOW_DIR) $::env(PARFLOW_DIR)
