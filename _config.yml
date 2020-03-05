@@ -1,3 +1,4 @@
 theme: jekyll-theme-slate
 title: [ParFlow Singularity Demo]
-description: [Demonstration of using ParFlow in a Singularity container]
+description: [Demonstration using ParFlow in a Singularity container]
+show_downloads: ["true"]
