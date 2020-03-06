@@ -425,7 +425,7 @@ pfset Solver.CLM.CLMDumpInterval                      1
 
 pfset Solver.CLM.MetForcing                           3D
 pfset Solver.CLM.MetFileName                          "NLDAS"
-pfset Solver.CLM.MetFilePath                          "../../NLDAS/"
+pfset Solver.CLM.MetFilePath                          "."
 pfset Solver.CLM.MetFileNT                            24
 pfset Solver.CLM.IstepStart                           1
 
@@ -516,6 +516,17 @@ if {[info exists RAPType]} {
   pfset Solver.Linear.Preconditioner.$Preconditioner.RAPType          $RAPType
 }
 
+
+#-----------------------------------------------------------------------------
+# Copy files and distribute.
+#-----------------------------------------------------------------------------
+
+# ParFlow Inputs
+set path "../../parflow_input"
+foreach file "LW.slopex LW.slopey IndicatorFile_Gleeson.50z press.init" {
+    file copy -force [format "%s/%s.pfb" $path $file] .
+}
+
 #-----------------------------------------------------------------------------
 # Distribute inputs
 #-----------------------------------------------------------------------------
@@ -525,40 +536,90 @@ pfdist -nz 1 LW.slopey.pfb
 pfdist IndicatorFile_Gleeson.50z.pfb
 pfdist press.init.pfb
 
+#CLM Inputs
+set path "../../clm_input"
+foreach file "drv_clmin drv_vegp drv_vegm.alluv" {
+    file copy -force [format "%s/%s.dat" $path $file] .
+}
+
+set path "../../NLDAS"
+foreach file "NLDAS.DSWR.000001_to_000024 NLDAS.DLWR.000001_to_000024 NLDAS.APCP.000001_to_000024 NLDAS.Temp.000001_to_000024 NLDAS.UGRD.000001_to_000024 NLDAS.VGRD.000001_to_000024 NLDAS.Press.000001_to_000024 NLDAS.SPFH.000001_to_000024" {
+    file copy -force [format "%s/%s.pfb" $path $file] .
+    pfdist -nz 24 [format "%s.pfb" $file]
+}
+
+file delete correct_output
+file link -symbolic correct_output "../correct_output"
+
 #-----------------------------------------------------------------------------
 # Run Simulation 
 #-----------------------------------------------------------------------------
 set runname "LW"
-puts $runname
 pfrun    $runname
+
+puts "ParFlow run Complete"
 
 #-----------------------------------------------------------------------------
 # Undistribute outputs
 #-----------------------------------------------------------------------------
 pfundist $runname
-pfundist press.init.pfb
-pfundist LW.slopex.pfb
-pfundist LW.slopey.pfb
-pfundist IndicatorFile_Gleeson.50z.pfb
 
+set StartTime [expr int([pfget TimingInfo.StartTime])]
+set StopTime [expr int([pfget TimingInfo.StopTime])]
 
-for {set i 1} { $i <= $StopTime } {incr i} {
-  set step [format "%05d" $i]
-  pfundist $runname.out.eflx_lh_tot.$step.pfb
-  pfundist $runname.out.qflx_evap_soi.$step.pfb
-  pfundist $runname.out.swe_out.$step.pfb
-  pfundist $runname.out.eflx_lwrad_out.$step.pfb
-  pfundist $runname.out.qflx_evap_tot.$step.pfb
-  pfundist $runname.out.t_grnd.$step.pfb
-  pfundist $runname.out.eflx_sh_tot.$step.pfb
-  pfundist $runname.out.qflx_evap_veg.$step.pfb
-  pfundist $runname.out.t_soil.$step.pfb
-  pfundist $runname.out.eflx_soil_grnd.$step.pfb
-  pfundist $runname.out.qflx_infl.$step.pfb
-  pfundist $runname.out.qflx_evap_grnd.$step.pfb
-  pfundist $runname.out.qflx_tran_veg.$step.pfb
+set ClmVariables [list "eflx_lh_tot" "qflx_evap_soi" "swe_out" "eflx_lwrad_out" "qflx_evap_tot" "t_grnd" "eflx_sh_tot" "qflx_evap_veg" "t_soil" "eflx_soil_grnd" "qflx_infl" "qflx_evap_grnd" "qflx_tran_veg" ]
+for {set i $StartTime} { $i <= $StopTime } {incr i} { 
+    set step [format "%05d" $i]
+    foreach variable $ClmVariables {
+        pfundist $runname.out.$variable.$step.pfb
+    }
 }
 
 
 
-puts "ParFlow run Complete"
+# #-----------------------------------------------------------------------------
+# # Distribute inputs
+# #-----------------------------------------------------------------------------
+# pfdist -nz 1 LW.slopex.pfb
+# pfdist -nz 1 LW.slopey.pfb
+
+# pfdist IndicatorFile_Gleeson.50z.pfb
+# pfdist press.init.pfb
+
+# #-----------------------------------------------------------------------------
+# # Run Simulation 
+# #-----------------------------------------------------------------------------
+# set runname "LW"
+# puts $runname
+# pfrun    $runname
+
+# #-----------------------------------------------------------------------------
+# # Undistribute outputs
+# #-----------------------------------------------------------------------------
+# pfundist $runname
+# pfundist press.init.pfb
+# pfundist LW.slopex.pfb
+# pfundist LW.slopey.pfb
+# pfundist IndicatorFile_Gleeson.50z.pfb
+
+
+# for {set i 1} { $i <= $StopTime } {incr i} {
+#   set step [format "%05d" $i]
+#   pfundist $runname.out.eflx_lh_tot.$step.pfb
+#   pfundist $runname.out.qflx_evap_soi.$step.pfb
+#   pfundist $runname.out.swe_out.$step.pfb
+#   pfundist $runname.out.eflx_lwrad_out.$step.pfb
+#   pfundist $runname.out.qflx_evap_tot.$step.pfb
+#   pfundist $runname.out.t_grnd.$step.pfb
+#   pfundist $runname.out.eflx_sh_tot.$step.pfb
+#   pfundist $runname.out.qflx_evap_veg.$step.pfb
+#   pfundist $runname.out.t_soil.$step.pfb
+#   pfundist $runname.out.eflx_soil_grnd.$step.pfb
+#   pfundist $runname.out.qflx_infl.$step.pfb
+#   pfundist $runname.out.qflx_evap_grnd.$step.pfb
+#   pfundist $runname.out.qflx_tran_veg.$step.pfb
+# }
+
+
+
+# puts "ParFlow run Complete"
