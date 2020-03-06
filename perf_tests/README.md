@@ -81,6 +81,8 @@
  pfset Process.Topology.Q        [lindex $argv 1]
  pfset Process.Topology.R        [lindex $argv 2]
  
+ pfset TimingInfo.StopTime        $StopTime
+ 
  
  ###Test Settings
  pfset Solver.Nonlinear.UseJacobian                       $UseJacobian 
