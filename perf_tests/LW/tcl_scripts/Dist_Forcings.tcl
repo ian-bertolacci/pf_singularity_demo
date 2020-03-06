@@ -38,7 +38,7 @@ pfset ComputationalGrid.NZ                      24
 set name NLDAS
 set var [list "APCP" "DLWR" "DSWR" "Press" "SPFH" "Temp" "UGRD" "VGRD"]
 
-set end 1
+set end 0 
   for {set i 0} {$i <= $end} {incr i} {
      foreach v $var {
       set t1 [expr $i * 24 + 1]
@@ -48,6 +48,6 @@ set end 1
      set filename [format "../NLDAS/%s.%s.%06d_to_%06d.pfb" $name $v $t1 $t2]
      puts $filename
     pfdist $filename
-     #pfundist $filename
+    # pfundist $filename
 }
 }
