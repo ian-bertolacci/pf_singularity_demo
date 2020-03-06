@@ -64,30 +64,48 @@
  * Move the validation portion of the script to the validate_results.tcl script.
  * Insert the following code block to set the solver configurations at runtime:
  ```tcl
+ 
+ set runname <domainname>
+ 
+ source solver_params.tcl
+
+ #-----------------------------------------------------------------------------
+ # StopTime
+ #-----------------------------------------------------------------------------
+ set StopTime [lindex $argv 3]
+
+ #-----------------------------------------------------------------------------
+ # Set Processor topology 
+ #-----------------------------------------------------------------------------
+ pfset Process.Topology.P        [lindex $argv 0]
+ pfset Process.Topology.Q        [lindex $argv 1]
+ pfset Process.Topology.R        [lindex $argv 2]
+ 
+ 
  ###Test Settings
-pfset Solver.Nonlinear.UseJacobian                       $UseJacobian 
-pfset Solver.Nonlinear.EtaValue                          $EtaValue
-pfset Solver.Linear.Preconditioner                       $Preconditioner
+ pfset Solver.Nonlinear.UseJacobian                       $UseJacobian 
+ pfset Solver.Nonlinear.EtaValue                          $EtaValue
+ pfset Solver.Linear.Preconditioner                       $Preconditioner
 
-if {[info exists PCMatrixType]} {
+ if {[info exists PCMatrixType]} {
 	pfset Solver.Linear.Preconditioner.PCMatrixType          $PCMatrixType
-}
+ }
 
-if {[info exists MaxIter]} { 
-  pfset Solver.Linear.Preconditioner.$Preconditioner.MaxIter         $MaxIter
-}
+ if {[info exists MaxIter]} { 
+   pfset Solver.Linear.Preconditioner.$Preconditioner.MaxIter         $MaxIter
+ }
 
-if {[info exists MaxLevels]} { 
-  pfset Solver.Linear.Preconditioner.$Preconditioner.MaxLevels         $MaxLevels
-}
+ if {[info exists MaxLevels]} { 
+   pfset Solver.Linear.Preconditioner.$Preconditioner.MaxLevels         $MaxLevels
+ }
 
-if {[info exists Smoother]} { 
-  pfset Solver.Linear.Preconditioner.$Preconditioner.Smoother         $Smoother
-}
+ if {[info exists Smoother]} { 
+   pfset Solver.Linear.Preconditioner.$Preconditioner.Smoother         $Smoother
+ }
 
-if {[info exists RAPType]} {
-  pfset Solver.Linear.Preconditioner.$Preconditioner.RAPType          $RAPType
-}
+ if {[info exists RAPType]} {
+   pfset Solver.Linear.Preconditioner.$Preconditioner.RAPType          $RAPType
+ }
 ```
  
 ## To Add or Change Solver Configurations for a Domain
