@@ -23,7 +23,7 @@ proc run_test { test_directory P Q R T } {
   # write a log file to the $test_directory
   # include Date/Time of run, number of runs, PQR, machine name, mem and cpu data
   set systemTime [clock seconds]
-  set hostName [exec hostname]
+  set hostName [exec cat /proc/sys/kernel/hostname]
   set cpuInfo [exec cat /proc/cpuinfo]
   set memInfo [exec cat /proc/meminfo]
   set output_file [open $test_directory/test_case.log w]
