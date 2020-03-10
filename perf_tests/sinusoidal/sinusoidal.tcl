@@ -297,17 +297,40 @@ pfset Solver.MaxIter                                     2500
 
 pfset Solver.TerrainFollowingGrid                        True
 
-pfset Solver.Nonlinear.MaxIter                           50
 pfset Solver.Nonlinear.ResidualTol                       1e-3
 pfset Solver.Nonlinear.StepTol                           1e-20
 pfset Solver.Nonlinear.Globalization                     LineSearch
 pfset Solver.Linear.KrylovDimension                      20
 pfset  Solver.Drop                                       1E-20
 pfset Solver.Nonlinear.EtaChoice                         EtaConstant
-pfset Solver.Nonlinear.EtaValue                          $EtaValue
+pfset Solver.Nonlinear.PrintFlag                         NoVerbosity
+
 pfset Solver.Nonlinear.UseJacobian                       $UseJacobian
+pfset Solver.Nonlinear.EtaValue                          $EtaValue
 pfset Solver.Linear.Preconditioner                       $Preconditioner
-pfset Solver.Nonlinear.PrintFlag			 NoVerbosity
+
+if {[info exists PCMatrixType]} {
+  pfset Solver.Linear.Preconditioner.PCMatrixType          $PCMatrixType
+}
+
+if {[info exists MaxLevels]} {
+  pfset Solver.Linear.Preconditioner.$Preconditioner.MaxLevels         $MaxLevels
+}
+
+if {[info exists MaxIter]} {
+  pfset Solver.Linear.Preconditioner.$Preconditioner.MaxIter         $MaxIter
+} else {
+  pfset Solver.Nonlinear.MaxIter                           50
+}
+
+if {[info exists Smoother]} {
+  pfset Solver.Linear.Preconditioner.$Preconditioner.Smoother         $Smoother
+}
+
+if {[info exists RAPType]} {
+  pfset Solver.Linear.Preconditioner.$Preconditioner.RAPType          $RAPType
+}
+
 
 pfset Solver.WriteSiloSubsurfData False
 pfset Solver.WriteSiloMask False
@@ -327,18 +350,6 @@ pfset Solver.WriteNetCDFSaturation False
 
 pfset Solver.ROMIOhints romio.hints
 
-if {[info exists PCMatrixType]} {
-	pfset Solver.Linear.Preconditioner.PCMatrixType          $PCMatrixType
-}
-
-
-if {[info exists Smoother]} {
-  pfset Solver.Linear.Preconditioner.$Preconditioner.Smoother         $Smoother
-}
-
-if {[info exists RAPType]} {
-  pfset Solver.Linear.Preconditioner.$Preconditioner.RAPType          $RAPType
-}
 
 #---------------------------------------------------------
 # Initial conditions: water pressure
